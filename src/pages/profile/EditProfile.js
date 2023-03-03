@@ -28,24 +28,30 @@ const EditProfile = () => {
     bio: user?.bio,
     photo: user?.photo,
   };
+ 
   const [profile, setProfile] = useState(initialState);
   const [profileImage, setProfileImage] = useState("");
 
   const handleInputChange = (e) => {
+    
     const { name, value } = e.target;
+   
     setProfile({ ...profile, [name]: value });
+   
   };
 
   const handleImageChange = (e) => {
-    setProfileImage(e.target.files[1]);
+    setProfileImage(e.target.files[0]);
   };
 
   const saveProfile = async (e) => {
     e.preventDefault();
+   
     setIsLoading(true);
     try {
       // Handle Image upload
       let imageURL;
+    
       if (
         profileImage &&
         (profileImage.type === "image/jpeg" ||
@@ -55,7 +61,7 @@ const EditProfile = () => {
         const image = new FormData();
         image.append("file", profileImage);
         image.append("cloud_name", "djaix1ohk");
-        image.append("upload_preset", "gpbfoi80");
+        image.append("upload_preset", "jdxzcohw");
 
         // First save image to cloudinary
         const response = await fetch(
@@ -64,7 +70,7 @@ const EditProfile = () => {
         );
         const imgData = await response.json();
         imageURL = imgData.url.toString();
-
+console.log(imgData);
         // Save Profile
         const formData = {
           name: profile.name,
@@ -72,9 +78,10 @@ const EditProfile = () => {
           bio: profile.bio,
           photo: profileImage ? imageURL : profile.photo,
         };
+        console.log(formData);
 
         const data = await updateUser(formData);
-        console.log(data);
+        
         toast.success("User updated");
         navigate("/profile");
         setIsLoading(false);
